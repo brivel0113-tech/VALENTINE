@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You ❤️</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: radial-gradient(circle at top, #2b1055, #000);
+  font-family: 'Poppins', sans-serif;
+  color: white;
+  overflow: hidden;
+}
+
+/* PAGE SYSTEM */
+.page {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+  padding: 20px;
+  opacity: 1;
+  transition: opacity 1.6s ease;
+}
+.hidden { opacity: 0; pointer-events: none; }
+
+/* TEXT */
+.line {
+  font-size: 1.5rem;
+  margin: 14px 0;
+  opacity: 0;
+  animation: fadeText 1.2s ease forwards;
+}
+
+/* BUTTON */
+button {
+  padding: 14px 30px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 30px;
+  background: linear-gradient(45deg, #ff5fa2, #ff8ccf);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 0 18px rgba(255,105,180,0.6);
+  margin: 10px;
+}
+
+#noBtn {
+  background: linear-gradient(45deg, #555, #888);
+  position: absolute;
+}
+
+/* AYAT WORD BY WORD */
+.word span {
+  opacity: 0;
+  animation: wordFade 0.6s ease forwards;
+}
+
+/* HEARTS */
+.heart {
+  position: fixed;
+  top: -10px;
+  font-size: 16px;
+  animation: fall linear forwards;
+  opacity: 0.8;
+}
+
+/* PHOTO EFFECT */
+.photo {
+  filter: grayscale(100%);
+  animation: photoColor 4s ease forwards;
+}
+
+/* ANIMATIONS */
+@keyframes fadeText {
+  from { opacity: 0; transform: translateY(20px); filter: blur(4px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+@keyframes wordFade { to { opacity: 1; } }
+@keyframes fall { to { transform: translateY(110vh); opacity: 0; } }
+@keyframes photoColor { to { filter: grayscale(0%); } }
+
+/* TAP HINT */
+.tap {
+  position: fixed;
+  bottom: 25px;
+  font-size: 0.9rem;
+  opacity: 0.7;
+  animation: fadeText 2s ease forwards;
+}
+</style>
+</head>
+
+<body>
+
+<!-- AUDIO (AUTOPLAY HACK) -->
+<audio id="song" src="lagu.mp3" autoplay loop muted></audio>
+
+<!-- PAGE 1 -->
+<div class="page" id="page1">
+ <div class="line" style="animation-delay:1s">And even if the sun refuse to shine</div>
+<div class="line" style="animation-delay:7s">Even if romance ran out of rhyme</div>
+<div class="line" style="animation-delay:13s">You would still have my heart</div>
+<div class="line" style="animation-delay:16s">Until the end of time</div>
+<div class="line" style="animation-delay:20s">Cuz all I need</div>
+<div class="line" style="animation-delay:25s">Is you, my Valentine ❤️</div>
+
+  <button style="opacity:0; animation:fadeText 1.5s ease forwards; animation-delay:25s"
+    onclick="nextPage(1,2)">
+    For you 💕
+  </button>
+
+  <div class="tap">tap anywhere 💕</div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page hidden" id="page2">
+  <h1 style="font-size:2.4rem; animation:fadeText 1.5s ease forwards">
+    Will you be my Valentine? 💖
+  </h1>
+  <div>
+    <button onclick="nextPage(2,3)">YES 💘</button>
+    <button id="noBtn">NO 🙃</button>
+  </div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page hidden" id="page3">
+  <h1 class="word" style="font-size:1.9rem; line-height:1.7;">
+    Lihatlah, tampan engkau, kekasihku, sungguh menarik; sungguh sejuk petiduran kita.
+  </h1>
+  <p style="margin-top:20px; color:#ffb6c1; opacity:0; animation:fadeText 2s ease forwards; animation-delay:4s">
+    — Kidung Agung 1:16
+  </p>
+  <button onclick="nextPage(3,4)" style="margin-top:30px">
+    Next 💗
+  </button>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page hidden photo" id="page4"
+  style="background:
+  linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+  url('foto.jpg') center/cover no-repeat;">
+  <h1 style="
+    font-size:2.4rem;
+    color:#ffb6c1;
+    text-shadow:0 0 30px rgba(255,182,193,0.9);
+    animation:fadeText 2s ease forwards;
+  ">
+    You just made my heart<br>
+    the happiest 💘<br><br>
+    <span style="font-size:1.2rem; color:white">
+      Happy Valentine 🌹
+    </span>
+  </h1>
+</div>
+
+<script>
+/* MUSIC AUTOPLAY FIX */
+const song = document.getElementById("song");
+song.volume = 0;
+song.play().catch(()=>{});
+
+document.body.addEventListener("click", () => {
+  song.muted = false;
+  song.play().catch(()=>{});
+  fadeIn();
+}, { once:true });
+
+function fadeIn() {
+  let v = 0;
+  const i = setInterval(() => {
+    if (v < 1) {
+      v += 0.02;
+      song.volume = v;
+    } else clearInterval(i);
+  }, 200);
+}
+
+/* PAGE SWITCH */
+function nextPage(from, to) {
+  document.getElementById("page"+from).classList.add("hidden");
+  document.getElementById("page"+to).classList.remove("hidden");
+  if (to === 3) animateWords();
+  if (to === 4) startHearts();
+}
+
+/* NO BUTTON KABUR */
+const noBtn = document.getElementById("noBtn");
+noBtn.addEventListener("mouseover", moveNo);
+noBtn.addEventListener("click", moveNo);
+function moveNo() {
+  noBtn.style.left = Math.random() * (window.innerWidth - 120) + "px";
+  noBtn.style.top = Math.random() * (window.innerHeight - 60) + "px";
+}
+
+/* AYAT WORD BY WORD */
+function animateWords() {
+  const el = document.querySelector(".word");
+  const words = el.innerText.split(" ");
+  el.innerHTML = "";
+  words.forEach((w, i) => {
+    const span = document.createElement("span");
+    span.innerText = w + " ";
+    span.style.animationDelay = (i * 0.25) + "s";
+    el.appendChild(span);
+  });
+}
+
+/* HEART FALL */
+function startHearts() {
+  setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerText = "💖";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.animationDuration = (4 + Math.random()*3) + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 7000);
+  }, 500);
+}
+</script>
+
+</body>
+</html>
